@@ -50,6 +50,20 @@ spec:
           image: image-tag-latest
           ports:
             - containerPort: 5127 # Matches the port used in the app
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5127
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5127
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          
           resources:
             limits:
               memory: 1024Mi

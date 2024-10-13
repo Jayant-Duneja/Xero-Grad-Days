@@ -22,6 +22,12 @@ public class HomeController : Controller
     {
         return View();
     }
+	
+	[HttpGet("health")]
+    public IActionResult Health()
+    {
+        return Ok(new { status = "Healthy" });
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
