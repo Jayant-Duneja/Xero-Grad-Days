@@ -10,15 +10,14 @@ WORKDIR /src
 COPY ["Xero-Grad-Days.csproj", "./"]
 RUN dotnet restore "./Xero-Grad-Days.csproj"
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "Xero-Grad-Days.csproj" -c Release -o /app/build
+RUN dotnet build "Xero-Grad-Days.csproj" -c Release -o /src/build
 
 FROM build AS publish
-RUN mkdir -p /app/publish
-RUN dotnet publish "Xero-Grad-Days.csproj" -c Release -o /app/publish
+WORKDIR /src
+RUN dotnet publish "Xero-Grad-Days.csproj" -c Release -o /src/publish
 
 # Use the runtime image to run the application
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /src/publish .
 ENTRYPOINT ["dotnet", "Xero-Grad-Days.dll"]
