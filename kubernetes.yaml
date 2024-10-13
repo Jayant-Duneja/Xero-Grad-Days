@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: 5127 # Matches the HTTP port exposed in your app
       protocol: TCP
       name: http
   selector:
@@ -18,11 +18,17 @@ kind: Ingress
 metadata:
   name: xero-grad-days-ingress
 spec:
-  defaultBackend:
-    service:
-      name: xero-grad-days-service
-      port:
-        number: 80
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: xero-grad-days-service
+                port:
+                  number: 80
 
 ---
 apiVersion: apps/v1
@@ -43,19 +49,7 @@ spec:
         - name: xero-grad-days
           image: image-tag-latest
           ports:
-            - containerPort: 8080
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            initialDelaySeconds: 3
-            periodSeconds: 5
+            - containerPort: 5127 # Matches the port used in the app
           resources:
             limits:
               memory: 1024Mi
