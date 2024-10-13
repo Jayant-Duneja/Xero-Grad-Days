@@ -51,15 +51,6 @@ jobs:
           location: ${{ env.CLUSTER_ZONE }}
       
       #
-      # Build the .NET code
-      #
-      - name: Build solution
-        run: |-
-          dotnet publish Xero-Grad-Days.csproj \
-            --configuration Release \
-            --output /app/publish
-      
-      #
       # Build the Docker image and push it to Artifact Registry
       #
       - name: Create image tag
