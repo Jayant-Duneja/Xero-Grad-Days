@@ -3,6 +3,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR app
 EXPOSE 80
 EXPOSE 443
+EXPOSE 5127  # HTTP port
+EXPOSE 7117  # HTTPS port
+
 
 # Use the SDK image to build and publish the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
