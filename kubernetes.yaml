@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: xero-grad-days
-          image: xero-grad-days
+          image: image-tag-latest
           ports:
             - containerPort: 8080
           livenessProbe:

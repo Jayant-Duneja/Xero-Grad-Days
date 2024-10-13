@@ -57,7 +57,7 @@ jobs:
         run: echo "IMAGE_TAG=${{ env.REPOSITORY_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:$GITHUB_SHA" >> $GITHUB_ENV
 
       - name: Lock image version in deployment.yaml
-        run: sed -i 's|xero-grad-days|${{ env.IMAGE_TAG }}|g' kubernetes.yaml
+        run: sed -i 's|image-tag-latest|${{ env.IMAGE_TAG }}|g' kubernetes.yaml
 
       - name: Build Docker image
         run: docker build --tag "${{ env.IMAGE_TAG }}" .
