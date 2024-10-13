@@ -23,8 +23,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: 16m
 spec:
   rules:
-    - host: localhost
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
@@ -33,6 +32,7 @@ spec:
                 name: xero-grad-days-service
                 port:
                   number: 80
+
 
 ---
 apiVersion: apps/v1
