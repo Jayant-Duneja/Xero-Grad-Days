@@ -6,6 +6,7 @@ EXPOSE 443
 EXPOSE 5127 
 EXPOSE 7117 
 
+ENV ASPNETCORE_URLS=http://+:5127
 
 # Use the SDK image to build and publish the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
