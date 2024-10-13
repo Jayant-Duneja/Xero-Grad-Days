@@ -1,12 +1,9 @@
 # Use the official ASP.NET Core runtime as a parent image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR app
-EXPOSE 80
-EXPOSE 443
-EXPOSE 5127 
-EXPOSE 7117 
+EXPOSE 8080 
 
-ENV ASPNETCORE_URLS=http://+:5127
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 
 # Use the SDK image to build and publish the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build

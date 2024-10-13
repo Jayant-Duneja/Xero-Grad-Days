@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 5127 # Matches the HTTP port exposed in your app
+      targetPort: 8080 # Matches the HTTP port exposed in your app
       protocol: TCP
       name: http
   selector:
@@ -49,18 +49,18 @@ spec:
         - name: xero-grad-days
           image: image-tag-latest
           ports:
-            - containerPort: 5127 # Matches the port used in the app
+            - containerPort: 8080 # Matches the port used in the app
           livenessProbe:
             httpGet:
               path: /health
-              port: 5127
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
           
           readinessProbe:
             httpGet:
               path: /health
-              port: 5127
+              port: 8080
             initialDelaySeconds: 3
             periodSeconds: 5
           
