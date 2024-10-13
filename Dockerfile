@@ -1,11 +1,11 @@
 # Use the official ASP.NET Core runtime as a parent image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR app
 EXPOSE 80
 EXPOSE 443
 
 # Use the SDK image to build and publish the application
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR src
 COPY ["Xero-Grad-Days.csproj", "."]
 RUN dotnet restore "Xero-Grad-Days.csproj"
