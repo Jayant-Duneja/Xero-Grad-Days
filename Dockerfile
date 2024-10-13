@@ -14,6 +14,7 @@ WORKDIR "/src/."
 RUN dotnet build "Xero-Grad-Days.csproj" -c Release -o /app/build
 
 FROM build AS publish
+RUN mkdir -p /app/publish
 RUN dotnet publish "Xero-Grad-Days.csproj" -c Release -o /app/publish
 
 # Use the runtime image to run the application
