@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: xero-grad-days-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: xero-grad-days
+  type: NodePort
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: xero-grad-days-ingress
+spec:
+  defaultBackend:
+    service:
+      name: xero-grad-days-service
+      port:
+        number: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xero-grad-days-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: xero-grad-days
+  template:
+    metadata:
+      labels:
+        app: xero-grad-days
+    spec:
+      containers:
+        - name: xero-grad-days
+          image: xero-grad-days
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            limits:
+              memory: 1024Mi
+            requests:
+              memory: 256Mi
