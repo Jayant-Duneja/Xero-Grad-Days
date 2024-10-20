@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Tag of the Docker image to roll back to'
+        required: true
+        default: 'previous-tag'
 
 env:
   PROJECT_ID: xero-grad-days
@@ -28,9 +34,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       
-      #
       # Authenticate to Google Cloud using workload identity federation
-      #
       - id: 'auth'
         name: 'Obtain access token by using workload identity federation'
         uses: 'google-github-actions/auth@v0'
@@ -50,9 +54,7 @@ jobs:
           cluster_name: ${{ env.CLUSTER }}
           location: ${{ env.CLUSTER_ZONE }}
       
-      #
       # Build the Docker image and push it to Artifact Registry
-      #
       - name: Create image tag
         run: echo "IMAGE_TAG=${{ env.REPOSITORY_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:$GITHUB_SHA" >> $GITHUB_ENV
 
@@ -64,10 +66,38 @@ jobs:
 
       - name: Publish Docker image to Google Artifact Registry
         run: docker push "${{ env.IMAGE_TAG }}"
-      
-      #
+
       # Deploy to GKE
-      #
       - name: Deploy to GKE
         run: kubectl apply -f kubernetes.yaml
-    
+
+  rollback:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Authenticate to Google Cloud
+      - id: 'auth'
+        name: 'Obtain access token by using workload identity federation'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          create_credentials_file: true
+          token_format: access_token
+          workload_identity_provider: projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-actions/providers/github-actions-oidc
+          service_account: github-actions-workflow@${{ env.PROJECT_ID }}.iam.gserviceaccount.com
+
+      # Connect to GKE
+      - name: Connect to GKE
+        uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: ${{ env.CLUSTER }}
+          location: ${{ env.CLUSTER_ZONE }}
+
+      # Rollback to the specified image tag
+      - name: Rollback to Previous Build
+        run: |
+          IMAGE_TAG="${{ github.event.inputs.image_tag }}"
+          sed -i 's|image-tag-latest|$IMAGE_TAG|g' kubernetes.yaml
+          kubectl apply -f kubernetes.yaml
