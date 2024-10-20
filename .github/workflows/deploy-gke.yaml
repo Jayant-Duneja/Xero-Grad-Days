@@ -25,6 +25,7 @@ env:
 
 jobs:
   build:
+    if: github.event_name == 'push'  # Ensure this job only runs on push events
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -72,8 +73,8 @@ jobs:
         run: kubectl apply -f kubernetes.yaml
 
   rollback:
+    if: github.event_name == 'workflow_dispatch'  # Only run rollback job on manual trigger
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
